@@ -1,6 +1,6 @@
 import React from 'react';
-import { StartTimeEvent } from './ScheduleMeeting';
-import { ThemedButton } from '../ThemedButton';
+import { StartTimeEvent } from './ScheduleMeeting.tsx';
+import { ThemedButton } from '../ThemedButton.tsx';
 import { format } from 'date-fns';
 import { styled } from 'goober';
 

@@ -1,24 +1,25 @@
-import logo from './logo.svg';
+import { ScheduleMeeting } from './components/ScheduleMeeting/ScheduleMeeting.tsx';
+
+
 import './App.css';
 
 function App() {
+  // Use the components and functions as needed
+  const availableTimeslots = [0, 1, 2, 3, 4, 5].map((id) => {
+    return {
+      id,
+      startTime: new Date(new Date(new Date().setDate(new Date().getDate() + id)).setHours(9, 0, 0, 0)),
+      endTime: new Date(new Date(new Date().setDate(new Date().getDate() + id)).setHours(17, 0, 0, 0)),
+    };
+  });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ScheduleMeeting
+      borderRadius={10}
+      primaryColor="#3f5b85"
+      eventDurationInMinutes={30}
+      availableTimeslots={availableTimeslots}
+      onStartTimeSelect={console.log}
+    />
   );
 }
 

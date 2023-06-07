@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StartTimeGridItemButton, ThemedButton } from '../ThemedButton';
+import { StartTimeGridItemButton, ThemedButton } from '../ThemedButton.tsx';
 
-import { Arrow } from '../ArrowSVG';
-import EventListItem from './StartTimeListItem';
-import { StartTimeEvent } from './ScheduleMeeting';
+import { Arrow } from '../ArrowSVG.tsx';
+import EventListItem from './StartTimeListItem.tsx';
+import { StartTimeEvent } from './ScheduleMeeting.tsx';
 import { format } from 'date-fns';
 import { styled } from 'goober';
 

@@ -15,10 +15,10 @@ import {
 } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 
-import { Arrow } from '../ArrowSVG';
-import Color from 'color';
-import ScheduleCalendar from './ScheduleCalendar';
-import StartTimeList from './StartTimeList';
+import { Arrow } from '../ArrowSVG.tsx';
+import Color from 'color'; 
+import ScheduleCalendar from './ScheduleCalendar.tsx';
+import StartTimeList from './StartTimeList.tsx';
 import { styled } from 'goober';
 
 type StyleVariables = {
