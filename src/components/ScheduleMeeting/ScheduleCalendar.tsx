@@ -200,13 +200,15 @@ type CalendarProps = {
   onDaySelected: (day: Date) => void;
   selectedDay: Date;
   locale?: Locale;
+  selectedTimeSlots: Array<StartTimeEvent>;
+
 };
 
 const formatDate = (date: Date, locale?: Locale) => {
   return format(date, 'MM/dd/yyyy', { locale });
 };
 
-const ScheduleCalendar: React.FC<CalendarProps> = ({ availableTimeslots, onDaySelected, selectedDay, locale }) => {
+const ScheduleCalendar: React.FC<CalendarProps> = ({ availableTimeslots, onDaySelected, selectedDay,selectedTimeSlots, locale }) => {
   const [daysAvailable, setDaysAvailable] = useState<Array<any>>([]);
 
   useEffect(() => {
@@ -229,19 +231,28 @@ const ScheduleCalendar: React.FC<CalendarProps> = ({ availableTimeslots, onDaySe
   const _onClickDay = (day: Date) => {
     onDaySelected(day);
   };
+  
 
   const _isTileDisabled = (props: CalendarTileProperties) => {
-    return props.view === 'month' && !daysAvailable.some((date) => date === formatDate(props.date, locale));
+    const formattedDate = formatDate(props.date, locale);
+    return (
+      props.view === 'month' &&
+      !daysAvailable.some((date) => date === formattedDate) &&
+      selectedTimeSlots.some((slot) => formatDate(slot.startTime, locale) === formattedDate)
+    );
   };
-
   const _renderClassName = (props: CalendarTileProperties) => {
-    if (daysAvailable.some((date) => date === formatDate(props.date, locale))) return ['day-tile', 'active-day-tile'];
-    return (props.view === 'month' && 'day-tile') || null;
+    const formattedDate = formatDate(props.date, locale);
+    if (daysAvailable.some((date) => date === formattedDate)) {
+      return ['day-tile', 'active-day-tile'];
+    }
+    return props.view === 'month' && 'day-tile';
   };
 
+  
   return (
     <StyledCalendar
-      defaultView={'month'}
+      defaultView="month"
       onClickDay={_onClickDay}
       showNavigation={false}
       tileDisabled={_isTileDisabled}
@@ -251,5 +262,4 @@ const ScheduleCalendar: React.FC<CalendarProps> = ({ availableTimeslots, onDaySe
     />
   );
 };
-
 export default ScheduleCalendar;

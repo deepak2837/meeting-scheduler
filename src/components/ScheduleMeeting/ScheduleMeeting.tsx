@@ -232,6 +232,8 @@ export const ScheduleMeeting: React.FC<Props> = ({
   const [nextFutureStartTimeAvailable, setNextFutureStartTimeAvailable] = useState<undefined | Date>();
 
   const [orderedAvailableTimeslots, setOrderedAvailableTimeslots] = useState<AvailableTimeslot[]>([]);
+  const [bookedSlots, setBookedSlots] = useState([]);
+
 
   useEffect(() => {
     setSelectedStartTime(_selectedStartTime ? _selectedStartTime.getTime() : undefined);
@@ -281,6 +283,7 @@ export const ScheduleMeeting: React.FC<Props> = ({
 
     return splitTimeslots;
   };
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
 
   const _onStartTimeSelect = (startTimeEvent: StartTimeEvent) => {
     const splitTimeslots = splitTimeslot(startTimeEvent);
@@ -290,14 +293,19 @@ export const ScheduleMeeting: React.FC<Props> = ({
       resetDate: () => setSelectedDay(defaultDate || new Date()),
       resetSelectedTimeState: () => setSelectedStartTime(undefined),
     };
-
+  
     setSelectedStartTime(startTimeEvent.startTime.getTime());
-
+  
     if (onStartTimeSelect) {
       onStartTimeSelect(startTimeEventEmitObject);
     }
+    setBookedSlots([...bookedSlots, startTimeEvent.startTime]);
+    setSelectedTimeSlots([...selectedTimeSlots, startTimeEvent]);
+    setSelectedDayStartTimeEventsList(selectedDayStartTimeEventsList.filter(
+      (event) => event.startTime !== startTimeEvent.startTime
+    ));
   };
-
+  
   useEffect(() => {
     // compile a list of all possible event start times given all timeslots
     const startTimeEvents = [];
@@ -314,14 +322,20 @@ export const ScheduleMeeting: React.FC<Props> = ({
         Math.floor(timeslotDuration / (eventDurationInMinutes + eventStartTimeSpreadInMinutes)) - 1;
 
       while (startTimesPossible >= 0) {
+        const startTime = addMinutes(
+          new Date(availableTimeslot.startTime),
+          startTimesPossible * (eventDurationInMinutes + eventStartTimeSpreadInMinutes),
+        );
+        const endTime = addMinutes(startTime, eventDurationInMinutes);
         const newStartTimeEvent: StartTimeEvent = {
           availableTimeslot,
-          startTime: addMinutes(
-            new Date(availableTimeslot.startTime),
-            startTimesPossible * (eventDurationInMinutes + eventStartTimeSpreadInMinutes),
-          ),
+          startTime,
+          endTime,
         };
-        startTimeEvents.push(newStartTimeEvent);
+        if (!bookedSlots.includes(startTime)) {
+          startTimeEvents.push(newStartTimeEvent);
+        }
+        // startTimeEvents.push(newStartTimeEvent);
         startTimesPossible--;
       }
     }
@@ -426,6 +440,7 @@ export const ScheduleMeeting: React.FC<Props> = ({
             locale={locale}
             selectedDay={selectedDay}
             availableTimeslots={orderedAvailableTimeslots}
+            selectedTimeSlots={selectedTimeSlots}
             onDaySelected={onDaySelected}
           />
         </CalendarContainer>
