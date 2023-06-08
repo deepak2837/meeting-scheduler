@@ -5,6 +5,9 @@ import { setup, styled } from 'goober';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { format } from 'date-fns';
 import { timeSlotDifference } from '../timeslotDifference.tsx';
+
+import Button from '@mui/material/Button';
+
 setup(React.createElement);
 
 
@@ -53,30 +56,13 @@ const CustomCard = styled('div')`
   width: 200px;
   height: 100px;
 `;
-// const localStorageData = JSON.parse(localStorage.getItem('selectedTimeSlots'));
 
-// useEffect(() => {
-//   const localStorageData = JSON.parse(localStorage.getItem('selectedTimeSlots'));
-
-//   if (localStorageData && Array.isArray(localStorageData) && localStorageData.length > 0) {
-//     const updatedRows = localStorageData.map((item, index) => ({
-//       id: index + 1,
-//       Date: item.startTime ? item.startTime.slice(0, 10) : '',
-//       Timing: item.startTime && item.endTime ? item.startTime.slice(11, 16) + ' - ' + item.endTime.slice(11, 16) : '',
-//     }));
-//     setRows(updatedRows);
-//   } else {
-//     setRows([]); // Set rows as an empty array when there is no data
-//   }
-// }, [selectedTimeSlots]);
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 70 },
   { field: 'Date', headerName: 'Date', width: 130 },
   { field: 'Timing', headerName: 'Timing', width: 130 },
 ];
-
-
 
 
 function Home() {
@@ -92,6 +78,8 @@ function Home() {
   const [selectedTimeSlots, setSelectedTimeSlots] = useState([]);
   const [borderRadius, setBorderRadius] = useState(10);
 
+
+
   
 
 
@@ -101,28 +89,31 @@ function Home() {
 
 
 
-
+  function addOffsetToTime(date, offsetHours, offsetMinutes) {
+    const newDate = new Date(date);
+    newDate.setHours(newDate.getHours() + offsetHours);
+    newDate.setMinutes(newDate.getMinutes() + offsetMinutes);
+    return newDate;
+  }
+  
   const availableTimeSlotss = [
     {
-      startTime: new Date('2023-06-08T16:00:00.000Z'),
-      endTime: new Date('2023-06-08T20:00:00.000Z'),
+      startTime: addOffsetToTime(new Date('2023-06-08T08:00:00.000Z'), 0,0),
+      endTime: addOffsetToTime(new Date('2023-06-15T20:00:00.000Z'),0, 0),
     }
-   
   ];
-
   
 
-const unavailableTimeSlots = JSON.parse(localStorage.getItem('selectedTimeSlots'));
-
+// const unavailableTimeSlots = JSON.parse(localStorage.getItem('selectedTimeSlots'));
+// console.log(unavailableTimeSlots)
+const unavailableTimeSlots =[ {}];
 
 
 console.log(availableTimeSlotss,unavailableTimeSlots)
 
-// const availableTimeSlotsLessUnavailableTimeSlots = timeSlotDifference(availableTimeSlotss,unavailableTimeSlots);
-
-const availableTimeSlotsLessUnavailableTimeSlots = availableTimeSlotss
-
-
+const availableTimeSlotsLessUnavailableTimeSlots = timeSlotDifference(availableTimeSlotss,unavailableTimeSlots);
+console.log(availableTimeSlotsLessUnavailableTimeSlots)
+// const availableTimeSlotsLessUnavailableTimeSlots = availableTimeSlotss
 
 
 
@@ -136,62 +127,50 @@ const availableTimeSlotsLessUnavailableTimeSlots = availableTimeSlotss
 
 
 
-
-  const handleTimeSlotClicked = (startTimeEventEmit) => {
-
-    if (resetDate) {
-      startTimeEventEmit.resetDate();
-    }
-    console.log(startTimeEventEmit.endTime)
-
-     
-function addGMTOffsets(date) {
-  const offsetInMilliseconds = 6.5 * 60 * 60000; // Offset in milliseconds (5 hours and 30 minutes)
-  const dateWithOffset = new Date(date.getTime() - offsetInMilliseconds);
-  return dateWithOffset;
-}
-    const selectedTimeSlot = {
-      id: startTimeEventEmit.id,
-      startTime: addGMTOffsets(startTimeEventEmit.startTime),
-      endTime: addGMTOffsets(startTimeEventEmit.endTime),
-    };
-    
-  
-    // Retrieve existing selected time slots from local storage
-    const storedTimeSlots = localStorage.getItem('selectedTimeSlots');
-    let timeSlots = [];
-    if (storedTimeSlots) {
-      timeSlots = JSON.parse(storedTimeSlots);
-    }
-    
-    const index = timeSlots.findIndex(slot => slot.startTime === startTimeEventEmit.startTime);
-
-    // If the time slot exists in the array, remove it
-    if (index !== -1) {
-      timeSlots.splice(index, 1);
-    }
-  
-    // Add the new selected time slot to the array
-
-    timeSlots.push(selectedTimeSlot); 
-  console.log(selectedTimeSlot)
-    // Store the updated time slots in local storage
-    localStorage.setItem('selectedTimeSlots', JSON.stringify(timeSlots));
-  
-    // Update the state
-    setSelectedTimeSlots(timeSlots);
-  
-    alert(
-      `Time selected: ${format(
-        startTimeEventEmit.startTime,
-        'cccc, LLLL do h:mm a',
-      )} \r`,
-    );
+const handleTimeSlotClicked = (startTimeEventEmit) => {
+  const selectedTimeSlot = {
+    id: startTimeEventEmit.id,
+    startTime: addOffsetToTime(startTimeEventEmit.startTime, 5, 30),
+    endTime: addOffsetToTime(startTimeEventEmit.endTime, 5, 30),
   };
+
+  // Retrieve existing time slots from local storage
+  const existingTimeSlots = JSON.parse(localStorage.getItem('selectedTimeSlots')) || [];
+
+  // Add the new selected time slot to the existing array
+  const updatedTimeSlots = [...existingTimeSlots, selectedTimeSlot];
+
+  // Store the updated time slots in local storage
+  localStorage.setItem('selectedTimeSlots', JSON.stringify(updatedTimeSlots));
+
+  // Update the rows state with the updated time slots
+ 
+  alert(
+    `Time selected: ${format(
+      startTimeEventEmit.startTime,
+      'cccc, LLLL do h:mm a',
+    )} \r`,
+  );
+};
+
+  // useEffect(() => {
+  //   const localStorageData = JSON.parse(localStorage.getItem('selectedTimeSlots'));
   
-  useEffect(() => {
+  //   if (localStorageData && Array.isArray(localStorageData)) {
+  //     const updatedRows = localStorageData.map((item, index) => ({
+  //       id: index + 1,
+  //       Date: item.startTime ? item.startTime.slice(0, 10) : '',
+  //       Timing: item.startTime && item.endTime ? item.startTime.slice(11, 16) + ' - ' + item.endTime.slice(11, 16) : '',
+  //     }));
+  //     setRows(updatedRows);
+  //   } else {
+  //     setRows([]); // Handle the case when localStorageData is not an array or is null/undefined
+  //   }
+  // }, [selectedTimeSlots,]);
+
+  const handleShowRows = () => {
     const localStorageData = JSON.parse(localStorage.getItem('selectedTimeSlots'));
-  
+
     if (localStorageData && Array.isArray(localStorageData)) {
       const updatedRows = localStorageData.map((item, index) => ({
         id: index + 1,
@@ -200,10 +179,9 @@ function addGMTOffsets(date) {
       }));
       setRows(updatedRows);
     } else {
-      setRows([]); // Handle the case when localStorageData is not an array or is null/undefined
+      setRows([]);
     }
-  }, [selectedTimeSlots]);
-  
+  };
   return (
     <Layout>
       <div>
@@ -256,7 +234,9 @@ function addGMTOffsets(date) {
                   />
                  
              
-                </CustomCard><div style={{ height: 200, width: '40%', marginTop: '2rem' }}>
+                </CustomCard>
+                <button onClick={handleShowRows}>Show Rows</button>
+                <div style={{ height: 200, width: '40%', marginTop: '2rem' }}>
           <DataGrid rows={rows} columns={columns} pageSize={5} />
         </div>
               </OptionsContainer>

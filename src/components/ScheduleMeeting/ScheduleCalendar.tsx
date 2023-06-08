@@ -1,5 +1,6 @@
 import Calendar, { CalendarTileProperties } from 'react-calendar';
-import { Locale, format, getDay, isValid, startOfMonth } from 'date-fns';
+import {Locale,  format, getDay, isValid, startOfMonth } from 'date-fns';
+
 import React, { useEffect, useState } from 'react';
 import { setup, styled } from 'goober';
 
