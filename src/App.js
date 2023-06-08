@@ -1,6 +1,6 @@
 import { ScheduleMeeting } from './components/ScheduleMeeting/ScheduleMeeting.tsx';
 
-
+import Home from './pages/index.js';
 import './App.css';
 
 function App() {
@@ -13,13 +13,16 @@ function App() {
     };
   });
   return (
-    <ScheduleMeeting
+    <> 
+    <Home />
+    {/* <ScheduleMeeting
       borderRadius={10}
       primaryColor="#3f5b85"
       eventDurationInMinutes={30}
       availableTimeslots={availableTimeslots}
       onStartTimeSelect={console.log}
-    />
+    />  */}
+    </>
   );
 }
 

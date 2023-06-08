@@ -224,7 +224,7 @@ const ScheduleCalendar: React.FC<CalendarProps> = ({ availableTimeslots, onDaySe
     });
 
     setDaysAvailable([...new Set(daysInTimeslots)]);
-  }, [availableTimeslots]);
+  }, [availableTimeslots,locale]);
 
   const _onClickDay = (day: Date) => {
     onDaySelected(day);
