@@ -99,7 +99,7 @@ function Home() {
   const availableTimeSlotss = [
     {
       startTime: addOffsetToTime(new Date('2023-06-08T08:00:00.000Z'), 0,0),
-      endTime: addOffsetToTime(new Date('2023-06-15T20:00:00.000Z'),0, 0),
+      endTime: addOffsetToTime(new Date('2025-06-15T20:00:00.000Z'),0, 0),
     }
   ];
   
